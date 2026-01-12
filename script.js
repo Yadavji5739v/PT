@@ -1,7 +1,8 @@
 const tbody = document.getElementById("tableBody");
-let sortTimeout = null;
 
+// ============================
 // CREATE 12 ROWS
+// ============================
 for (let i = 1; i <= 12; i++) {
     const row = document.createElement("tr");
 
@@ -17,29 +18,26 @@ for (let i = 1; i <= 12; i++) {
     tbody.appendChild(row);
 }
 
-// LIVE TOTAL UPDATE (NO SORT)
-function updateTotalsOnly() {
-    const rows = tbody.querySelectorAll("tr");
+// ============================
+// LIVE TOTAL CALCULATION ONLY
+// (NO SORTING HERE)
+// ============================
+function updateTotals(row) {
+    const kill = +row.querySelector(".kill").value || 0;
+    const pos  = +row.querySelector(".pos").value || 0;
 
-    rows.forEach(row => {
-        const kill = +row.querySelector(".kill").value || 0;
-        const pos = +row.querySelector(".pos").value || 0;
-
-        // TOTAL = Kill + Position (Booyah excluded)
-        row.querySelector(".total").innerText = kill + pos;
-    });
-
-    // Delay sorting until typing stops
-    clearTimeout(sortTimeout);
-    sortTimeout = setTimeout(sortAndRank, 300);
+    // TOTAL = Kill + Position
+    row.querySelector(".total").innerText = kill + pos;
 }
 
-// SORT + RANK (SAFE, NO FOCUS LOSS)
+// ============================
+// SORT + RANK (SAFE)
+// ============================
 function sortAndRank() {
     const rows = Array.from(tbody.querySelectorAll("tr"));
 
-    rows.forEach(row =>
-        row.classList.remove("rank-1", "rank-2", "rank-3")
+    rows.forEach(r =>
+        r.classList.remove("rank-1", "rank-2", "rank-3")
     );
 
     rows.sort((a, b) =>
@@ -57,15 +55,30 @@ function sortAndRank() {
     });
 }
 
-// LISTEN FOR INPUT (SMOOTH TYPING)
-tbody.addEventListener("input", updateTotalsOnly);
+// ============================
+// EVENT HANDLING (KEY FIX)
+// ============================
+tbody.addEventListener("input", (e) => {
+    const row = e.target.closest("tr");
+    if (!row) return;
 
+    // ONLY update total, DO NOT SORT
+    updateTotals(row);
+});
 
+// Sort ONLY when user finishes editing (blur)
+tbody.addEventListener("focusout", (e) => {
+    if (e.target.matches(".kill, .pos")) {
+        sortAndRank();
+    }
+});
 
-// ==========================
-// EXPORT AS PNG (DYNAMIC NAME)
-// ==========================
+// ============================
+// EXPORT AS PNG (GROUP NAME)
+// ============================
 function exportPNG() {
+    sortAndRank(); // ensure final ranking before export
+
     const poster = document.querySelector(".poster");
     const groupInput = document.getElementById("groupNumber");
     const groupNumber = groupInput ? groupInput.value : "Unknown";
