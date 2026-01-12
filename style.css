@@ -1,0 +1,191 @@
+* {
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: #0b1220;
+    padding: 40px;
+    color: white;
+}
+
+/* MAIN CARD */
+.poster {
+    max-width: 1100px;
+    margin: auto;
+    background: linear-gradient(180deg, #0f172a, #020617);
+    border: 2px solid #38bdf8;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+/* HEADER */
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    color: #38bdf8;
+    font-size: 42px;
+    letter-spacing: 3px;
+}
+
+header h2 {
+    font-size: 20px;
+    margin-top: 8px;
+    letter-spacing: 2px;
+}
+#groupNumber {
+    width: 80px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid #38bdf8;
+    color: #38bdf8;
+    font-size: 42px;
+    font-weight: bold;
+    text-align: center;
+}
+
+
+.line {
+    margin: 20px auto;
+    height: 2px;
+    width: 80%;
+    background: #38bdf8;
+}
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead th {
+    background: #1e293b;
+    color: #38bdf8;
+    padding: 14px;
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+tbody td {
+    padding: 14px;
+    text-align: center;
+    border-bottom: 1px solid #1e293b;
+}
+
+/* INPUTS */
+input {
+    background: transparent;
+    border: 1px solid #334155;
+    color: white;
+    padding: 6px;
+    width: 80px;
+    text-align: center;
+    border-radius: 4px;
+}
+
+input.team {
+    width: 160px;
+    text-align: left;
+    padding-left: 8px;
+}
+
+/* TOP 3 HIGHLIGHT */
+.rank-1 {
+    background: linear-gradient(90deg, #14532d, #052e16);
+}
+
+.rank-2 {
+    background: linear-gradient(90deg, #14532d, #052e16);
+}
+
+
+.total {
+    font-weight: bold;
+}
+
+/* BUTTONS */
+.actions {
+    text-align: center;
+    margin-top: 25px;
+}
+
+button {
+    padding: 12px 25px;
+    margin: 0 10px;
+    border: none;
+    background: #38bdf8;
+    color: #020617;
+    font-size: 15px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0ea5e9;
+}
+
+/* PRINT */
+@media print {
+    body {
+        background: white;
+        color: black;
+    }
+    .actions {
+        display: none;
+    }
+    .poster {
+        border: none;
+    }
+}
+/* ==============================
+   PERFECT ONE-PAGE PRINT FIX
+================================ */
+
+@media print {
+
+    /* FORCE COLORS */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* A4 PAGE */
+    @page {
+        size: A4 portrait;
+        margin: 6mm;
+    }
+
+    body {
+        background: #0b1220 !important;
+    }
+
+    /* SCALE DOWN SLIGHTLY TO FIT ALL 12 ROWS */
+    .poster {
+        transform: scale(0.88);
+        transform-origin: top center;
+        page-break-inside: avoid;
+    }
+
+    /* PREVENT ROW SPLITTING */
+    table, tr, td, th {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+    }
+
+    /* REMOVE EXTRA SPACE */
+    header {
+        margin-bottom: 10px;
+    }
+
+    .line {
+        margin: 12px auto;
+    }
+
+    /* HIDE BUTTONS */
+    .actions {
+        display: none !important;
+    }
+}

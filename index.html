@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Overall Standings</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="poster">
+
+    <header>
+        <h1>
+    GROUP 
+    <input id="groupNumber" value="147" />
+</h1>
+
+        <h2>OVERALL STANDINGS</h2>
+        <div class="line"></div>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Team</th>
+                <th>Booyahs</th>
+                <th>Kill Pts</th>
+                <th>Pos Pts</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+
+        <tbody id="tableBody">
+            <!-- Rows added by JS -->
+        </tbody>
+    </table>
+
+    <div class="actions">
+        <button onclick="exportPNG()">Export as PNG</button>
+
+    </div>
+
+</div>
+
+<!-- ✅ LOAD SCRIPTS AT THE END -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
