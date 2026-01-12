@@ -1,6 +1,7 @@
 const tbody = document.getElementById("tableBody");
+let sortTimeout = null;
 
-// Create 12 rows
+// CREATE 12 ROWS
 for (let i = 1; i <= 12; i++) {
     const row = document.createElement("tr");
 
@@ -16,9 +17,9 @@ for (let i = 1; i <= 12; i++) {
     tbody.appendChild(row);
 }
 
-// AUTO CALCULATION FUNCTION
-function autoCalculate() {
-    const rows = Array.from(tbody.querySelectorAll("tr"));
+// LIVE TOTAL UPDATE (NO SORT)
+function updateTotalsOnly() {
+    const rows = tbody.querySelectorAll("tr");
 
     rows.forEach(row => {
         const kill = +row.querySelector(".kill").value || 0;
@@ -26,17 +27,26 @@ function autoCalculate() {
 
         // TOTAL = Kill + Position (Booyah excluded)
         row.querySelector(".total").innerText = kill + pos;
-
-        row.classList.remove("rank-1", "rank-2", "rank-3");
     });
 
-    // Sort by total points
+    // Delay sorting until typing stops
+    clearTimeout(sortTimeout);
+    sortTimeout = setTimeout(sortAndRank, 300);
+}
+
+// SORT + RANK (SAFE, NO FOCUS LOSS)
+function sortAndRank() {
+    const rows = Array.from(tbody.querySelectorAll("tr"));
+
+    rows.forEach(row =>
+        row.classList.remove("rank-1", "rank-2", "rank-3")
+    );
+
     rows.sort((a, b) =>
         b.querySelector(".total").innerText -
         a.querySelector(".total").innerText
     );
 
-    // Re-append & rank
     rows.forEach((row, index) => {
         row.children[0].innerText = index + 1;
         tbody.appendChild(row);
@@ -47,12 +57,18 @@ function autoCalculate() {
     });
 }
 
-// LISTEN TO INPUT CHANGES (AUTO)
-tbody.addEventListener("input", autoCalculate);
+// LISTEN FOR INPUT (SMOOTH TYPING)
+tbody.addEventListener("input", updateTotalsOnly);
 
-// EXPORT AS PNG
+
+
+// ==========================
+// EXPORT AS PNG (DYNAMIC NAME)
+// ==========================
 function exportPNG() {
     const poster = document.querySelector(".poster");
+    const groupInput = document.getElementById("groupNumber");
+    const groupNumber = groupInput ? groupInput.value : "Unknown";
 
     html2canvas(poster, {
         scale: 3,
@@ -60,7 +76,7 @@ function exportPNG() {
         backgroundColor: null
     }).then(canvas => {
         const link = document.createElement("a");
-        link.download = "group-standings.png";
+        link.download = `Group-${groupNumber}.png`;
         link.href = canvas.toDataURL("image/png");
         link.click();
     });
