@@ -10,7 +10,7 @@ for (let i = 1; i <= 12; i++) {
     row.innerHTML = `
         <td>${i}</td>
         <td><input class="team" placeholder="Team ${i}"></td>
-        <td><input type="number" class="booyah" value="0" readonly></td>
+        <td><input type="number" class="booyah" min="0" max="50" value="0"></td>
         <td><input type="number" class="kill" min="0" max="999" value="0"></td>
         <td><input type="number" class="pos" min="0" max="999" value="0"></td>
         <td class="total">0</td>
