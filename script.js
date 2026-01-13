@@ -5,13 +5,14 @@ const tbody = document.getElementById("tableBody");
 // ============================
 for (let i = 1; i <= 12; i++) {
     const row = document.createElement("tr");
+    row.dataset.index = i; // for stable sorting
 
     row.innerHTML = `
         <td>${i}</td>
         <td><input class="team" placeholder="Team ${i}"></td>
-        <td><input type="number" class="booyah" value="0"></td>
-        <td><input type="number" class="kill" value="0"></td>
-        <td><input type="number" class="pos" value="0"></td>
+        <td><input type="number" class="booyah" value="0" readonly></td>
+        <td><input type="number" class="kill" min="0" max="999" value="0"></td>
+        <td><input type="number" class="pos" min="0" max="999" value="0"></td>
         <td class="total">0</td>
     `;
 
@@ -23,15 +24,22 @@ for (let i = 1; i <= 12; i++) {
 // (NO SORTING HERE)
 // ============================
 function updateTotals(row) {
-    const kill = +row.querySelector(".kill").value || 0;
-    const pos  = +row.querySelector(".pos").value || 0;
+    let killInput = row.querySelector(".kill");
+    let posInput  = row.querySelector(".pos");
 
-    // TOTAL = Kill + Position
+    // Clamp values between 0 and 999
+    let kill = Math.max(0, Math.min(999, parseInt(killInput.value) || 0));
+    let pos  = Math.max(0, Math.min(999, parseInt(posInput.value) || 0));
+
+    killInput.value = kill;
+    posInput.value = pos;
+
+    // TOTAL = Kill + Position (Booyah excluded)
     row.querySelector(".total").innerText = kill + pos;
 }
 
 // ============================
-// SORT + RANK (SAFE)
+// SORT + RANK (TOTAL BASED ONLY)
 // ============================
 function sortAndRank() {
     const rows = Array.from(tbody.querySelectorAll("tr"));
@@ -40,10 +48,16 @@ function sortAndRank() {
         r.classList.remove("rank-1", "rank-2", "rank-3")
     );
 
-    rows.sort((a, b) =>
-        b.querySelector(".total").innerText -
-        a.querySelector(".total").innerText
-    );
+    rows.sort((a, b) => {
+        const totalDiff =
+            b.querySelector(".total").innerText -
+            a.querySelector(".total").innerText;
+
+        if (totalDiff !== 0) return totalDiff;
+
+        // Stable sort for equal points
+        return a.dataset.index - b.dataset.index;
+    });
 
     rows.forEach((row, index) => {
         row.children[0].innerText = index + 1;
@@ -56,17 +70,18 @@ function sortAndRank() {
 }
 
 // ============================
-// EVENT HANDLING (KEY FIX)
+// EVENT HANDLING (SMOOTH INPUT)
 // ============================
 tbody.addEventListener("input", (e) => {
     const row = e.target.closest("tr");
     if (!row) return;
 
-    // ONLY update total, DO NOT SORT
-    updateTotals(row);
+    if (e.target.matches(".kill, .pos")) {
+        updateTotals(row);
+    }
 });
 
-// Sort ONLY when user finishes editing (blur)
+// Sort ONLY after user finishes editing
 tbody.addEventListener("focusout", (e) => {
     if (e.target.matches(".kill, .pos")) {
         sortAndRank();
@@ -74,7 +89,7 @@ tbody.addEventListener("focusout", (e) => {
 });
 
 // ============================
-// EXPORT AS PNG (GROUP NAME)
+// EXPORT AS PNG (GROUP NUMBER)
 // ============================
 function exportPNG() {
     sortAndRank(); // ensure final ranking before export
